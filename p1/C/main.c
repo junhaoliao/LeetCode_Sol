@@ -50,13 +50,13 @@ int hashFunc(int iNum){
  * Note: The returned array must be malloced, assume caller calls free().
  */
 int* twoSum(int* pNums, int iNumsSize, int iTarget, int* pReturnSize){
-    int         iHashIdx    = 0;
-    int         iI          = 0;
-    int         iKey        = 0;
-    sHashNode*  psCurElem   = NULL;
-    sHashNode** ppsCurElem  = NULL;
-    int*        pResult     = NULL;
+    int         iHashIdx                    = 0;
+    int         iI                          = 0;
+    int         iKey                        = 0;
     sHashNode*  pHashTable[HASH_TABLE_SIZE] = {NULL};
+    sHashNode*  psCurElem                   = NULL;
+    sHashNode** ppsCurElem                  = NULL;
+    int*        pResult                     = NULL;
 
     *pReturnSize    = 2;
     pResult         = calloc(2,sizeof(int));
@@ -96,9 +96,9 @@ int main(){
     int     iNumsSize   = 4;
     int     iReturnSize = 0;
     int     iTarget     = 0;
+    int     pExpected[] = {0,3};
     int     pNums[]     = {0,4,3,0};
     int*    pResult     = NULL;
-    int     pExpected[] = {0,3};
 
     pResult = twoSum(pNums,iNumsSize,iTarget,&iReturnSize);
     if(pResult == NULL){
