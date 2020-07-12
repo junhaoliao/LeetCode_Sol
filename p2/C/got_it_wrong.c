@@ -111,7 +111,10 @@ int main(){
         psExpected  = psExpected    -> psNext;
         psResult    = psResult      -> psNext;
     }
-    bMatch = true;
+
+    if(psResult == NULL){
+        bMatch = true;
+    }
 
     printf( "%s\n",
             bMatch?"The result matches":"The result doesn't match");

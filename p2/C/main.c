@@ -1,28 +1,30 @@
 /*/////////////////////////////////////////////////////////////////////////////////////////////////////////////
- * 1. Two Sum
- * Given an array of integers, return indices of the two numbers such that they add up to a specific target.
- * You may assume that each input would have exactly one solution, and you may not use the same element twice.
+ * 2. Add Two Numbers
+ * You are given two non-empty linked lists representing two non-negative integers. The digits
+ * are stored in reverse order and each of their nodes contain a single digit. Add the two numbers
+ * and return it as a linked list.
+ * You may assume the two numbers do not contain any leading zero, except the number 0 itself.
  *
  * Example:
- * Given nums = [2, 7, 11, 15], target = 9,
- * Because nums[0] + nums[1] = 2 + 7 = 9,
- * return [0, 1].
+ * Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+ * Output: 7 -> 0 -> 8
+ * Explanation: 342 + 465 = 807.
  *
  * Approach:
- * Use a hash table to store (num->idx).
- * Say x + y = z, then y = z - x
- * For each number x, find its counterpart y by subtracting x from z. Now that we have the counterpart y, we can
- * quickly search it in the hash table. If there is such entry, return the index. If not, create a new entry into
- * the hash table.
+ * Say x + y = z
+ * If z>=10, there is a carry digit (1). The carry digit should be accounted for the next digit.
+ * Starting from the heads of the linked lists(least-significant digit), do addition for each
+ * digit in the linked lists in order. If there is a carry digit, account for it in the addition
+ * for the next digit.
  *
  * Complexity:
- * Time: O(n)
- * Space: O(n)
+ * Time: O(max(m+n))
+ * Space: O(max(m+n))
  *
  * Test Results:
  * Success
- * Runtime: 4 ms, faster than 98.23% of C online submissions for Two Sum.
- * Memory Usage: 6.5 MB, less than 17.10% of C online submissions for Two Sum.
+ * Runtime: 12 ms, faster than 82.78% of C online submissions for Add Two Numbers.
+ * Memory Usage: 7.3 MB, less than 68.43% of C online submissions for Add Two Numbers.
  *
  */////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -73,14 +75,16 @@ struct sListNode* addTwoNumbers(struct sListNode* psL1, struct sListNode* psL2){
         return psHead;
     }
 
-    while (psL1!=NULL){
-        if (psL2 == NULL){
-            iSum    = psL1 -> iVal + (int)bCarry;
-        } else{
-            iSum    = psL1 -> iVal + psL2 -> iVal +(int)bCarry;
+    // do addition as long as either list is not NULL
+    while (psL1!=NULL || psL2!=NULL){
+        // if the list node is null, the number should be seen as 0
+        iSum    = (psL1?(psL1 -> iVal):0) + (psL2?(psL2 -> iVal):0) +(int)bCarry;
+        if(psL1){
+            psL1    = psL1 -> psNext;
+        }
+        if(psL2){
             psL2    = psL2 -> psNext;
         }
-        psL1                = psL1 -> psNext;
         bCarry              = iSum/10;
 
         psCur   -> psNext   = calloc(1, sizeof(sListNode));
@@ -89,18 +93,7 @@ struct sListNode* addTwoNumbers(struct sListNode* psL1, struct sListNode* psL2){
         psCur   -> psNext   = NULL;
     }
 
-    while (psL2!=NULL){
-        iSum                = psL2 -> iVal + (int)bCarry;
-        bCarry              = iSum/10;
-
-        psL2                = psL2 -> psNext;
-
-        psCur   -> psNext   = calloc(1, sizeof(sListNode));
-        psCur               = psCur -> psNext;
-        psCur   -> iVal     = iSum % 10;
-        psCur   -> psNext   = NULL;
-    }
-
+    // account for the carry digit if any
     if(bCarry){
         psCur   -> psNext   = calloc(1, sizeof(sListNode));
         psCur               = psCur -> psNext;
@@ -108,6 +101,7 @@ struct sListNode* addTwoNumbers(struct sListNode* psL1, struct sListNode* psL2){
         psCur   -> psNext   = NULL;
     }
 
+    // free the dummy head and return the actual head
     psCur = psHead -> psNext;
     free(psHead);
     return psCur;
@@ -153,7 +147,10 @@ int main(){
         psExpected  = psExpected    -> psNext;
         psResult    = psResult      -> psNext;
     }
-    bMatch = true;
+
+    if(psResult == NULL){
+        bMatch = true;
+    }
 
     printf( "%s\n",
             bMatch?"The result matches":"The result doesn't match");
